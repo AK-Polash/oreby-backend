@@ -9,21 +9,21 @@ app.listen(8000, () => {
   console.log("PORT IS RUNNING");
 });
 
-mongoose
-  .connect(
-    "mongodb+srv://Polash:plumbum7@cluster0.srdzrgk.mongodb.net/oreby?retryWrites=true&w=majority"
-  )
-  .then(() => console.log("Connected!"));
+app.get("/", (req, res) => {
+  const data = [
+    {
+      name: "AK Polash",
+      phone: "01743713200",
+    },
+    {
+      name: "Emon Islam",
+      phone: "01623933474",
+    },
+    {
+      name: "MK Mehedi",
+      phone: "01910648064",
+    },
+  ];
 
-app.post("/signup", async (req, res) => {
-  const { name, email, gender } = req.body;
-
-  const user = new User({
-    name: name,
-    email: email,
-    gender: gender,
-  });
-
-  user.save();
-  res.send({ message: "User Information Collected!" });
+  res.send(data);
 });
