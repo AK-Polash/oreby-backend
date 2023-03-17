@@ -1,29 +1,24 @@
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
+const database = require("./config/db.js");
 const User = require("./model/user.js");
 
 app.use(express.json());
+
+database();
 
 app.listen(8000, () => {
   console.log("PORT IS RUNNING");
 });
 
-app.get("/", (req, res) => {
-  const data = [
-    {
-      name: "AK Polash",
-      phone: "01743713200",
-    },
-    {
-      name: "Emon Islam",
-      phone: "01623933474",
-    },
-    {
-      name: "MK Mehedi",
-      phone: "01910648064",
-    },
-  ];
+app.post("/", (req, res) => {
+  const { name, email, gender } = req.body;
+  const user = new User({
+    name,
+    email,
+    gender,
+  });
 
-  res.send(data);
+  user.save();
+  res.send(user);
 });
