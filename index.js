@@ -3,10 +3,14 @@ const app = express();
 const database = require("./config/db.js");
 const User = require("./model/user.js");
 const jwt = require("jsonwebtoken");
+const tokenVerify = require("./middleware/tokenVerify");
 
 app.use(express.json());
 
 database();
+
+// let tkn = jwt.sign({ passCode: "nothingElseMatters" }, "boom");
+// console.log(tkn);
 
 app.listen(8000, () => {
   console.log("PORT IS RUNNING");
@@ -43,4 +47,9 @@ app.post("/verification", async (req, res) => {
     );
     res.send({ message: "Your account has been verified!" });
   }
+});
+
+app.get("/users", tokenVerify, async (req, res) => {
+  let users = await User.find({});
+  res.send(users);
 });
