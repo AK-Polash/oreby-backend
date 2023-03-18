@@ -5,7 +5,11 @@ const tokenVerify = (req, res, next) => {
     if (err) {
       return res.send({ message: "Unauthorized Entry!" });
     } else {
-      next();
+      if (decode.passCode === "nothingElseMatters") {
+        return next();
+      } else {
+        res.send({ message: "Authorization Changed!" });
+      }
     }
   });
 };
