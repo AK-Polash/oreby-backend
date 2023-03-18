@@ -16,8 +16,10 @@ app.listen(8000, () => {
   console.log("PORT IS RUNNING");
 });
 
-app.post("/", (req, res) => {
+app.post("/", async (req, res) => {
   const { name, email, password, gender } = req.body;
+  const data = await User.find({ email: email });
+
   const user = new User({
     name,
     email,
@@ -25,19 +27,22 @@ app.post("/", (req, res) => {
     gender,
   });
 
-  user.save();
+  if (data.length > 0 && email === data[0].email) {
+    return res.send({ message: "User Already Exist!" });
+  } else {
+    user.save();
+    res.send({ message: "Registration Successfull!" });
 
-  let token = jwt.sign({ email: user.email }, "kire");
-  console.log(token);
-
-  res.send(user);
+    let token = jwt.sign({ email: user.email }, "kire");
+    console.log(token);
+  }
 });
 
 app.post("/verification", async (req, res) => {
-  let decode = jwt.verify(req.headers.authorization, "kire");
-  let item = await User.find({ email: decode.email });
+  const decode = jwt.verify(req.headers.authorization, "kire");
+  const data = await User.find({ email: decode.email });
 
-  if (item[0].verified === true) {
+  if (data[0].verified === true) {
     res.send({ message: "Email Already verified!" });
   } else {
     await User.findOneAndUpdate(
@@ -50,6 +55,6 @@ app.post("/verification", async (req, res) => {
 });
 
 app.get("/users", tokenVerify, async (req, res) => {
-  let users = await User.find({});
+  const users = await User.find({});
   res.send(users);
 });
